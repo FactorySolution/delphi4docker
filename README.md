@@ -192,7 +192,6 @@ $ ./PersonalDockerBuild
   
 - Please keep in mind that you can’t distribute the above-created docker image publicly because of license limitations. You can use it for your personal uses as you have the necessary Emabarcadero license
 
+# Compiling your Delphi projects using GitHub Actions
 
-
-
-
+You can compile your Delphi projects hosted on GitHub using the GitHub Actions for free. We have created a list of steps that you can follow in the Wiki File: https://github.com/lmbelo/delphi4docker/wiki/GitHub-Actions
