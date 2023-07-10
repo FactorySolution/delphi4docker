@@ -1,0 +1,55 @@
+# This is a basic workflow to help you get started with Actions
+
+name: DockerDelphiCompile
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Jobs section
+jobs:    
+    delphi4docker:
+        runs-on: ubuntu-20.04      
+        steps:
+          - name: Free Disk Space
+            uses: jlumbroso/free-disk-space@main
+            with:
+              tool-cache: true
+          - name: Checkout main repo
+            uses: actions/checkout@v2
+          - name: Login to Docker Hub (private repo)
+            uses: docker/login-action@v2.1.0
+            with:
+              username: ${{ secrets.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_TOKEN }}
+          - name: Run Delphi Docker container
+            run: |
+              cat > $(pwd)/test/compile.bat <<EOF  
+              msbuildconfig.bat
+              cd Shared\TestApp1
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\Win32 /p:DCC_DcuOutput=lib\Win32 /p:Platform=Win32
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\Win64 /p:DCC_DcuOutput=lib\Win64 /p:Platform=Win64
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\Android /p:DCC_DcuOutput=lib\Android /p:Platform=Android
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\Android64 /p:DCC_DcuOutput=lib\Android64 /p:Platform=Android64
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\Linux64 /p:DCC_DcuOutput=lib\Linux64 /p:Platform=Linux64
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\OSX64 /p:DCC_DcuOutput=lib\OSX64 /p:Platform=OSX64
+              msbuild TestApp1.dproj /t:Clean /t:Build /p:Config=Release /p:DCC_ExeOutput=bin\OSXARM64 /p:DCC_DcuOutput=lib\OSXARM64 /p:Platform=OSXARM64
+              EOF
+              
+              exec docker run -i -v $(pwd)/test/:/root/.wine/drive_c/users/root/Documents/Embarcadero/Studio/Projects/Shared --entrypoint=/bin/bash --name d4d lmbelo/d4d:0.0.1-alpha -c "wine cmd < ./Shared/compile.bat"
+              
+          - name: Check folder
+            run: |
+              ls -R ./test/TestApp1
+          - name: Upload build result
+            uses: actions/upload-artifact@v3
+            with: 
+              name: assets-for-download
+              path: test/TestApp1/bin
