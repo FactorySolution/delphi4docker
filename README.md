@@ -39,7 +39,7 @@ https://github.com/lmbelo/delphi4docker/assets/8376898/e8d4ba26-4542-4f2b-86df-f
 # Setting up for Ubuntu 20.04 VM
 ## Installing WINE
 
-**Note: You can simplify this process running the setup_wine.sh script**
+**Note: You can simplify this process running the [setup_wine.sh](https://github.com/lmbelo/delphi4docker/blob/main/wine/setup_wine.sh) script**
 
 - Verify 64-bit architecture. The following command should respond with "amd64"
 ``` shell
@@ -130,7 +130,7 @@ $ wine winecfg
 
 Before creating the docker container, we will install the Docker to our Ubuntu 20.04 system, which is available by default in the Ubuntu repository
 
-**Note: You can simplify this process running the setup_docker.sh script**
+**Note: You can simplify this process running the [setup_docker.sh](https://github.com/lmbelo/delphi4docker/blob/main/docker/setup_docker.sh) script**
 
 Update all packages list on the Ubuntu repository and install Docker using the apt command below
 ``` shell
